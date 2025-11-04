@@ -1,0 +1,36 @@
+server:
+  port: 8090
+
+spring:
+  application:
+    name: authorization-service
+  # ⭐ AJOUTEZ CES LIGNES ⭐
+  zipkin:
+    base-url: http://localhost:9411
+    enabled: true
+  sleuth:
+    sampler:
+      probability: 1.0
+
+security:
+  admin:
+    username: admin
+    password: adminpass
+  user:
+    username: user
+    password: userpass
+
+# ⭐ AJOUTEZ CETTE SECTION ⭐
+management:
+  tracing:
+    sampling:
+      probability: 1.0
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,zipkin
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/

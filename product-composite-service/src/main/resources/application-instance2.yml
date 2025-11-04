@@ -1,0 +1,85 @@
+server:
+  port: 8086
+  servlet:
+    context-path: /api  # ← TRÈS IMPORTANT !
+
+spring:
+  application:
+    name: product-composite-service
+  datasource:
+    url: jdbc:h2:file:./data/product_composite_instance2
+    driverClassName: org.h2.Driver
+    username: sa
+    password: ""
+  h2:
+    console:
+      enabled: true
+      path: /h2-console-instance2
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: create
+  sql:
+    init:
+      mode: always
+      data-locations: classpath:data-instance2.sql
+  cloud:
+    config:
+      enabled: false
+    compatibility-verifier:
+      enabled: false
+  zipkin:
+    base-url: http://localhost:9411
+    enabled: true
+  sleuth:
+    sampler:
+      probability: 1.0
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,mappings,metrics,env,zipkin
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: always
+      show-components: always
+    mappings:
+      enabled: true
+    metrics:
+      enabled: true
+    env:
+      enabled: true
+  tracing:
+    sampling:
+      probability: 1.0
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+    register-with-eureka: true
+    fetch-registry: true
+  instance:
+    preferIpAddress: false
+    hostname: localhost
+    instance-id: product-composite-service:8086
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      productService:
+        registerHealthIndicator: true
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+  timelimiter:
+    instances:
+      productService:
+        timeoutDuration: 2s
+
+logging:
+  level:
+    com.yourpackage: DEBUG
+  pattern:
+    console: "[INSTANCE-2] %clr(%d{HH:mm:ss.SSS}){faint} %clr(%-5level) %clr(${spring.application.name}:${server.port}){cyan} - %msg%n"

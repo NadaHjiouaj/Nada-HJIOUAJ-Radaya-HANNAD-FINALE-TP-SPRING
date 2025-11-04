@@ -1,0 +1,3 @@
+com\example\authservice\config\SecurityConfig.class
+com\example\authservice\controller\AuthController.class
+com\example\authservice\AuthServiceApplication.class

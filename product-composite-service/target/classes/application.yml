@@ -1,0 +1,104 @@
+server:
+  port: 8085
+
+spring:
+  application:
+    name: product-composite-service
+  cloud:
+    config:
+      enabled: false
+    compatibility-verifier:
+      enabled: false
+  # Configuration Zipkin pour la traçabilité
+  zipkin:
+    base-url: http://localhost:9411
+    enabled: true
+  sleuth:
+    sampler:
+      probability: 1.0
+
+# ⭐⭐ CONFIGURATION RESILIENCE4J COMPLÈTE ⭐⭐
+resilience4j:
+  circuitbreaker:
+    instances:
+      productService:
+        register-health-indicator: true
+        failure-rate-threshold: 50
+        minimum-number-of-calls: 5
+        automatic-transition-from-open-to-half-open-enabled: true
+        wait-duration-in-open-state: 10s
+        permitted-number-of-calls-in-half-open-state: 3
+        sliding-window-size: 10
+        sliding-window-type: COUNT_BASED
+      reviewService:
+        register-health-indicator: true
+        failure-rate-threshold: 50
+        minimum-number-of-calls: 5
+        automatic-transition-from-open-to-half-open-enabled: true
+        wait-duration-in-open-state: 10s
+        permitted-number-of-calls-in-half-open-state: 3
+        sliding-window-size: 10
+        sliding-window-type: COUNT_BASED
+      recommendationService:
+        register-health-indicator: true
+        failure-rate-threshold: 50
+        minimum-number-of-calls: 5
+        automatic-transition-from-open-to-half-open-enabled: true
+        wait-duration-in-open-state: 10s
+        permitted-number-of-calls-in-half-open-state: 3
+        sliding-window-size: 10
+        sliding-window-type: COUNT_BASED
+  timelimiter:
+    instances:
+      productService:
+        timeout-duration: 5s
+      reviewService:
+        timeout-duration: 5s
+      recommendationService:
+        timeout-duration: 5s
+
+# ⭐⭐ CONFIGURATION MANAGEMENT COMPLÈTE ⭐⭐
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,mappings,metrics,env,circuitbreakers
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: always
+      show-components: always
+    info:
+      enabled: true
+    mappings:
+      enabled: true
+    metrics:
+      enabled: true
+    env:
+      enabled: true
+    circuitbreakers:
+      enabled: true
+  health:
+    circuitbreakers:
+      enabled: true
+  tracing:
+    sampling:
+      probability: 1.0
+
+# Configuration Eureka
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+    register-with-eureka: true
+    fetch-registry: true
+  instance:
+    preferIpAddress: false
+    hostname: localhost
+
+# Configuration Logging pour le debug
+logging:
+  level:
+    com.example.productcomposite: DEBUG
+    org.springframework.cloud.circuitbreaker: DEBUG
+    org.springframework.web.client: DEBUG

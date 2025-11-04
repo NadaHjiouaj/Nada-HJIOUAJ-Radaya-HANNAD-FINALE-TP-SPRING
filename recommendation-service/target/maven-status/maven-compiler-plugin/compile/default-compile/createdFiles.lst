@@ -1,0 +1,4 @@
+com\example\recommendationservice\controller\RecommendationController.class
+com\example\recommendationservice\model\Recommendation.class
+com\example\recommendationservice\repository\RecommendationRepository.class
+com\example\recommendationservice\RecommendationServiceApplication.class

@@ -1,0 +1,36 @@
+server:
+  port: 8082
+
+spring:
+  application:
+    name: review-service
+  cloud:
+    config:
+      uri: http://localhost:8888
+      fail-fast: false
+    compatibility-verifier:
+      enabled: false
+  config:
+    import: "optional:configserver:http://localhost:8888"
+  # ⭐ AJOUTEZ CES LIGNES ⭐
+  zipkin:
+    base-url: http://localhost:9411
+    enabled: true
+  sleuth:
+    sampler:
+      probability: 1.0
+
+management:
+  tracing:
+    sampling:
+      probability: 1.0
+  # ⭐ MODIFIEZ CETTE SECTION ⭐
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,zipkin
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka

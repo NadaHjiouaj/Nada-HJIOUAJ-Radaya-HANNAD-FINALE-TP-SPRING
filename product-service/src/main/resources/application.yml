@@ -1,0 +1,71 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: product-service
+  cloud:
+    config:
+      uri: http://localhost:8888
+      fail-fast: false
+    compatibility-verifier:
+      enabled: false
+  config:
+    import: "optional:configserver:http://localhost:8888"
+  
+  # ⭐ CONFIGURATION ZIPPIN ET TRACING
+  zipkin:
+    base-url: http://localhost:9411
+    enabled: true
+  sleuth:
+    sampler:
+      probability: 1.0
+  
+  # ⭐⭐ CONFIGURATION BASE DE DONNÉES ET DONNÉES DE TEST
+  sql:
+    init:
+      mode: always
+  jpa:
+    defer-datasource-initialization: true
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+  datasource:
+    url: jdbc:h2:mem:productdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: password
+  
+  # ⭐ CONFIGURATION H2 CONSOLE (POUR VOIR LA BASE DE DONNÉES)
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+# ⭐ CONFIGURATION MANAGEMENT ET ACTUATOR
+management:
+  tracing:
+    sampling:
+      probability: 1.0
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,zipkin
+  endpoint:
+    health:
+      show-details: always
+
+# ⭐ CONFIGURATION EUREKA
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+  instance:
+    prefer-ip-address: true
+
+# ⭐ CONFIGURATION LOGGING (POUR VOIR LES ERREURS)
+logging:
+  level:
+    com.example.productservice: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
